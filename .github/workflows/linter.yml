@@ -1,0 +1,110 @@
+name: Quality Gate - Linters
+
+on:
+  push:
+    branches:
+      - main
+      - development
+  pull_request:
+    branches:
+      - main
+      - development
+
+permissions:
+  contents: read
+
+jobs:
+  lint-backend:
+    name: Backend ESLint
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    defaults:
+      run:
+        working-directory: backend/nestjs
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v5
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v6
+        with:
+          node-version-file: backend/nestjs/.nvmrc
+          cache: npm
+          cache-dependency-path: backend/nestjs/package-lock.json
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Check backend lint without fixes
+        run: npx --no-install eslint "{src,apps,libs,test}/**/*.ts"
+
+  lint-frontend:
+    name: Frontend ESLint
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    defaults:
+      run:
+        working-directory: frontend/dashboard
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v5
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v6
+        with:
+          node-version-file: frontend/dashboard/.nvmrc
+          cache: npm
+          cache-dependency-path: frontend/dashboard/package-lock.json
+
+      - name: Install dependencies
+        run: npm ci --legacy-peer-deps
+
+      - name: Check frontend lint
+        run: npm run lint
+
+  lint-firmware:
+    name: Firmware cppcheck
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    defaults:
+      run:
+        working-directory: firmware/esp32
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v5
+
+      - name: Set up Python
+        uses: actions/setup-python@v6
+        with:
+          python-version: "3.11"
+
+      - name: Install PlatformIO
+        run: pip install platformio
+
+      - name: Check firmware for medium and high severity defects
+        run: pio check -e esp32dev --fail-on-defect medium --fail-on-defect high
+
+  quality-gate:
+    name: Quality Gate (All Linters)
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    if: ${{ always() }}
+    needs:
+      - lint-backend
+      - lint-frontend
+      - lint-firmware
+    steps:
+      - name: Require all linters to succeed
+        env:
+          BACKEND_RESULT: ${{ needs.lint-backend.result }}
+          FRONTEND_RESULT: ${{ needs.lint-frontend.result }}
+          FIRMWARE_RESULT: ${{ needs.lint-firmware.result }}
+        run: |
+          echo "Backend: $BACKEND_RESULT"
+          echo "Frontend: $FRONTEND_RESULT"
+          echo "Firmware: $FIRMWARE_RESULT"
+          if [[ "$BACKEND_RESULT" != "success" || "$FRONTEND_RESULT" != "success" || "$FIRMWARE_RESULT" != "success" ]]; then
+            echo "Quality gate failed: every linter must succeed."
+            exit 1
+          fi
+          echo "Quality gate passed."
