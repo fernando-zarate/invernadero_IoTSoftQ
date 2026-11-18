@@ -1,0 +1,24 @@
+{
+  "horusecCliDisableDocker": false,
+  "horusecCliEnableGitHistoryAnalysis": false,
+  "horusecCliReturnErrorIfFoundVulnerability": false,
+  "horusecCliPrintOutputType": "json",
+  "horusecCliJsonOutputFilepath": "reports/horusec/report.json",
+  "horusecCliTimeoutInSecondsAnalysis": 600,
+  "horusecCliEnableInformationSeverity": true,
+  "horusecCliSeveritiesToIgnore": [],
+  "horusecCliFalsePositiveHashes": [],
+  "horusecCliRiskAcceptHashes": [],
+  "horusecCliFilesOrPathsToIgnore": [
+    "**/.git/**",
+    "**/.horusec/**",
+    "**/node_modules/**",
+    "**/vendor/**",
+    "**/.pio/**",
+    "**/.next/**",
+    "**/dist/**",
+    "**/build/**",
+    "**/coverage/**",
+    "**/reports/horusec/**"
+  ]
+}

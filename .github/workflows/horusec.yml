@@ -1,0 +1,87 @@
+name: Horusec SAST
+
+on:
+  push:
+    branches: [main, development]
+  pull_request:
+    branches: [main, development]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  sast:
+    name: Vulnerabilities and secrets (informational findings)
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    env:
+      # Official prerelease fixes v2.8.0's parsing of modern Docker versions.
+      HORUSEC_VERSION: v2.9.0-beta.3
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v5
+        with:
+          persist-credentials: false
+
+      - name: Record scan context
+        shell: bash
+        run: |
+          mkdir -p reports/horusec
+          {
+            echo "date_utc=$(date -u +%FT%TZ)"
+            echo "commit=$(git rev-parse HEAD)"
+            echo "horusec_version=$HORUSEC_VERSION"
+            echo "run_url=$GITHUB_SERVER_URL/$GITHUB_REPOSITORY/actions/runs/$GITHUB_RUN_ID"
+            echo "event=$GITHUB_EVENT_NAME"
+            echo "scope=current checkout; git history disabled"
+          } > reports/horusec/context.txt
+          cp horusec-config.json reports/horusec/
+
+      - name: Install checksum-verified Horusec
+        shell: bash
+        run: |
+          mkdir -p "$RUNNER_TEMP/horusec-bin"
+          cd "$RUNNER_TEMP/horusec-bin"
+          base="https://github.com/ZupIT/horusec/releases/download/$HORUSEC_VERSION"
+          curl --fail --location --retry 2 --max-time 120 "$base/horusec_linux_amd64" -o horusec_linux_amd64
+          curl --fail --location --retry 2 --max-time 30 "$base/checksums.txt" -o checksums.txt
+          grep ' horusec_linux_amd64$' checksums.txt | sha256sum --check
+          chmod +x horusec_linux_amd64
+          echo "$RUNNER_TEMP/horusec-bin" >> "$GITHUB_PATH"
+          ./horusec_linux_amd64 version >> "$GITHUB_WORKSPACE/reports/horusec/context.txt"
+
+      - name: Scan and verify operational success
+        shell: bash
+        run: |
+          docker info > reports/horusec/docker-info.log 2>&1
+          set +e
+          horusec_linux_amd64 start -p . --config-file-path horusec-config.json \
+            --log-file-path reports/horusec/horusec-internal.log \
+            > reports/horusec/horusec.log 2>&1
+          scan_exit=$?
+          set -e
+          echo "scan_exit=$scan_exit" >> reports/horusec/context.txt
+          if [ "$scan_exit" -ne 0 ]; then
+            echo "Horusec failed; inspect the artifact privately (it may contain sensitive data)."
+            exit "$scan_exit"
+          fi
+          # Horusec can exit 0 with failed tools or an incomplete analysis.
+          jq -e '.status == "success" and .errors == "" and
+            ((.analysisVulnerabilities == null) or
+             (.analysisVulnerabilities | type == "array"))' \
+            reports/horusec/report.json > /dev/null
+          if grep -Fq 'Some analysis was not completed due to the timeout' reports/horusec/horusec.log; then
+            echo "Incomplete Horusec analysis: scanner timeout."
+            exit 1
+          fi
+          echo "Scan completed. Findings are informational; review the artifact."
+
+      - name: Preserve reports and diagnostics
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: horusec-${{ github.run_id }}-${{ github.run_attempt }}
+          path: reports/horusec/
+          if-no-files-found: warn
+          retention-days: 7
