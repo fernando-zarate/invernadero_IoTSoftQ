@@ -1,8 +1,8 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { Device } from 'src/models/entities/device.entity';
-import { CreateDeviceDto } from 'src/models/dto/create-device.dto';
+import { Device } from '../models/entities/device.entity';
+import { CreateDeviceDto } from '../models/dto/create-device.dto';
 
 @Injectable()
 export class DevicesRepository {

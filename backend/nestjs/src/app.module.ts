@@ -5,7 +5,7 @@ import appConfig from './config/app.config';
 import { ControllersModule } from './controllers/controllers.module';
 import { ServicesModule } from './services/services.module';
 import { RepositoriesModule } from './repositories/repositories.module';
-import { SeedModule } from './seed/seed.module';
+import { databaseOptions } from './database/options';
 
 @Module({
   imports: [
@@ -17,21 +17,12 @@ import { SeedModule } from './seed/seed.module';
     TypeOrmModule.forRootAsync({
       imports: [ConfigModule],
       inject: [ConfigService],
-      useFactory: (configService: ConfigService) => ({
-        type: 'postgres',
-        host: configService.get<string>('POSTGRES_HOST'),
-        port: configService.get<number>('POSTGRES_PORT'),
-        username: configService.get<string>('POSTGRES_USER'),
-        password: configService.get<string>('POSTGRES_PASSWORD'),
-        database: configService.get<string>('POSTGRES_DB'),
-        entities: [__dirname + '/**/*.entity{.ts,.js}'],
-        synchronize: true, // Disable in production and use migrations instead
-      }),
+      useFactory: (configService: ConfigService) =>
+        databaseOptions(configService),
     }),
     ControllersModule,
     ServicesModule,
     RepositoriesModule,
-    SeedModule,
   ],
 })
 export class AppModule {}

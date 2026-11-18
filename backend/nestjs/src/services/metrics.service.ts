@@ -1,4 +1,4 @@
-import { Injectable, Logger, Inject } from '@nestjs/common';
+import { Injectable, Logger, Inject, NotFoundException } from '@nestjs/common';
 import { CreateMetricDto } from '../models/dto/create-metric.dto';
 import type { IMetricsService } from '../ports/in/IMetricsService.interface';
 import type { IMetricsRepository } from '../ports/out/IMetricsRepository.interface';
@@ -7,11 +7,11 @@ import {
   isAnomalousReading,
   calculateDewPoint,
   calculateMovingAverage,
-} from 'src/algorithms/climate-math';
+} from '../algorithms/climate-math';
 import {
   clasificarSuelo,
   isTankLevelCritical,
-} from 'src/algorithms/soil-and-tank-math';
+} from '../algorithms/soil-and-tank-math';
 
 interface MetricHistoryItem {
   value: number;
@@ -30,6 +30,27 @@ export class MetricsService implements IMetricsService {
   ) {}
 
   async registerMetrics(idDevice: string, dto: CreateMetricDto) {
+    // Resolve the complete sensor set before writing any readings.
+    const readings = await Promise.all(
+      Object.entries({
+        temp: dto.temp,
+        airHum: dto.airHum,
+        soilHum: dto.soilHum,
+        waterLevel: dto.waterLevel,
+      }).map(async ([sensorType, value]) => {
+        const sensor = await this.sensorsRepository.findByDeviceAndType(
+          idDevice,
+          sensorType,
+        );
+        if (!sensor) {
+          throw new NotFoundException(
+            `Sensor ${sensorType} is not registered for device ${idDevice}`,
+          );
+        }
+        return { sensor, value };
+      }),
+    );
+
     const latestData = await this.metricsRepository.findLatestMetrics(
       idDevice,
       ['temp'],
@@ -60,33 +81,7 @@ export class MetricsService implements IMetricsService {
       );
     }
 
-    // 2. Mapeamos las métricas del DTO a un formato clave-valor para iterarlas fácilmente
-    const mapMetrics = {
-      temp: dto.temp,
-      airHum: dto.airHum,
-      soilHum: dto.soilHum,
-      waterLevel: dto.waterLevel,
-    };
-
-    // 3. Iteramos cada métrica recibida para guardarla en su respectivo sensor
-    for (const [sensorType, value] of Object.entries(mapMetrics)) {
-      // Buscamos el sensor asociado a este dispositivo en la BD
-      const sensor = await this.sensorsRepository.findByDeviceAndType(
-        idDevice,
-        sensorType,
-      );
-
-      if (!sensor) {
-        // Opción A: Lanzar error si no existe (Exige aprovisionamiento previo en /handshake)
-        console.warn(
-          `[Advertencia] El sensor ${sensorType} no está registrado para el dispositivo ${idDevice}`,
-        );
-        continue;
-
-        // Opción B (Alternativa): Podrías crearlo automáticamente acá si no querés hacer handshake previo
-      }
-
-      // Guardamos el registro histórico en la tabla 'metrics' asociada a ese idSensor
+    for (const { sensor, value } of readings) {
       await this.metricsRepository.saveMetric(value, new Date(), sensor.id);
     }
 

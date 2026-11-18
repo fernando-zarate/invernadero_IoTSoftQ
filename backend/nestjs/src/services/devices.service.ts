@@ -1,5 +1,5 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
-import { DevicesRepository } from 'src/repositories/device.repository';
+import { DevicesRepository } from '../repositories/device.repository';
 
 @Injectable()
 export class DevicesService {

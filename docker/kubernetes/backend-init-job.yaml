@@ -1,0 +1,41 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: greenhouse-backend-init
+spec:
+  completions: 1
+  parallelism: 1
+  backoffLimit: 2
+  activeDeadlineSeconds: 600
+  template:
+    spec:
+      restartPolicy: Never
+      automountServiceAccountToken: false
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 1000
+        seccompProfile:
+          type: RuntimeDefault
+      containers:
+        - name: initialize
+          # Replace with the same immutable image reference used by the backend.
+          image: greenhouse-backend:local
+          command: ["node", "dist/database/cli.js", "init"]
+          envFrom:
+            - secretRef:
+                name: greenhouse-backend-db
+          env:
+            - name: SEED_DEVICE_COUNT
+              value: "2000"
+          resources:
+            requests:
+              cpu: 100m
+              memory: 128Mi
+            limits:
+              cpu: "1"
+              memory: 512Mi
+          securityContext:
+            allowPrivilegeEscalation: false
+            readOnlyRootFilesystem: true
+            capabilities:
+              drop: ["ALL"]

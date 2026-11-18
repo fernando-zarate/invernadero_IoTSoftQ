@@ -1,8 +1,8 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { Metric } from 'src/models/entities/metric.entity';
-import { IMetricsRepository } from 'src/ports/out/IMetricsRepository.interface';
+import { Metric } from '../models/entities/metric.entity';
+import { IMetricsRepository } from '../ports/out/IMetricsRepository.interface';
 
 @Injectable()
 export class MetricsRepository implements IMetricsRepository {
