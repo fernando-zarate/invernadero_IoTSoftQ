@@ -1,0 +1,38 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: postgres-config
+  namespace: invernadero
+  labels:
+    app.kubernetes.io/part-of: invernadero-iot
+data:
+  POSTGRES_DB: "soft_eng_db"
+  POSTGRES_INITDB_ARGS: "--encoding=UTF-8 --lc-collate=C --lc-ctype=C"
+  PGDATA: "/var/lib/postgresql/data/pgdata"
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: backend-config
+  namespace: invernadero
+  labels:
+    app.kubernetes.io/part-of: invernadero-iot
+data:
+  NODE_ENV: "production"
+  NESTJS_PORT: "3000"
+  POSTGRES_HOST: "postgres-service"
+  POSTGRES_PORT: "5432"
+  POSTGRES_DB: "soft_eng_db"
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: frontend-config
+  namespace: invernadero
+  labels:
+    app.kubernetes.io/part-of: invernadero-iot
+data:
+  NODE_ENV: "production"
+  PORT: "3000"
+  HOSTNAME: "0.0.0.0"
+  NEXT_PUBLIC_API_URL: "/api"
