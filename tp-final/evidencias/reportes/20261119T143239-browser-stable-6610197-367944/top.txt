@@ -1,0 +1,8 @@
+NAME                            CPU(cores)   MEMORY(bytes)   
+backend-5d57b7f774-8jzhz        2m           68Mi            
+backend-5d57b7f774-nc8qw        3m           50Mi            
+front-canary-89c47b5c4-4jm7d    2m           36Mi            
+front-canary-89c47b5c4-fm7dp    2m           36Mi            
+front-stable-5d58f4dcb7-fgf77   2m           36Mi            
+front-stable-5d58f4dcb7-tbkhb   2m           39Mi            
+postgres-0                      7m           36Mi            

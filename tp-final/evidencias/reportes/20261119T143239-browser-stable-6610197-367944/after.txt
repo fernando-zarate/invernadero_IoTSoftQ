@@ -1,0 +1,11 @@
+NAME                                READY   STATUS    RESTARTS   AGE   IP            NODE               NOMINATED NODE   READINESS GATES
+pod/backend-5d57b7f774-8jzhz        1/1     Running   0          22m   10.244.0.9    terrasense-final   <none>           <none>
+pod/backend-5d57b7f774-nc8qw        1/1     Running   0          22m   10.244.0.14   terrasense-final   <none>           <none>
+pod/front-canary-89c47b5c4-4jm7d    1/1     Running   0          22m   10.244.0.11   terrasense-final   <none>           <none>
+pod/front-canary-89c47b5c4-fm7dp    1/1     Running   0          22m   10.244.0.10   terrasense-final   <none>           <none>
+pod/front-stable-5d58f4dcb7-fgf77   1/1     Running   0          22m   10.244.0.12   terrasense-final   <none>           <none>
+pod/front-stable-5d58f4dcb7-tbkhb   1/1     Running   0          22m   10.244.0.13   terrasense-final   <none>           <none>
+pod/postgres-0                      1/1     Running   0          22m   10.244.0.8    terrasense-final   <none>           <none>
+
+NAME                                          REFERENCE            TARGETS       MINPODS   MAXPODS   REPLICAS   AGE
+horizontalpodautoscaler.autoscaling/backend   Deployment/backend   cpu: 2%/60%   2         6         2          22m

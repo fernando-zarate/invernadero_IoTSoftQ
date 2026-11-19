@@ -1,0 +1,1975 @@
+apiVersion: v1
+items:
+- apiVersion: apps/v1
+  kind: Deployment
+  metadata:
+    annotations:
+      deployment.kubernetes.io/revision: "1"
+      kubectl.kubernetes.io/last-applied-configuration: |
+        {"apiVersion":"apps/v1","kind":"Deployment","metadata":{"annotations":{},"name":"backend","namespace":"terrasense-final"},"spec":{"replicas":1,"selector":{"matchLabels":{"app":"backend"}},"template":{"metadata":{"labels":{"app":"backend","version":"1.0.0"}},"spec":{"containers":[{"envFrom":[{"configMapRef":{"name":"app-config"}},{"secretRef":{"name":"postgres-local"}}],"image":"terrasense-backend:1.0.0","imagePullPolicy":"Never","livenessProbe":{"periodSeconds":10,"tcpSocket":{"port":3000}},"name":"backend","ports":[{"containerPort":3000}],"readinessProbe":{"httpGet":{"path":"/metrics/ESP32-INV-01/latest?sensorType=temp,airHum,soilHum,waterLevel","port":3000},"periodSeconds":5,"timeoutSeconds":2},"resources":{"limits":{"cpu":"500m","memory":"384Mi"},"requests":{"cpu":"100m","memory":"128Mi"}},"startupProbe":{"failureThreshold":60,"periodSeconds":3,"tcpSocket":{"port":3000}}}]}}}}
+    creationTimestamp: "2026-11-19T14:10:07Z"
+    generation: 2
+    name: backend
+    namespace: terrasense-final
+    resourceVersion: "995"
+    uid: 961011b7-6d15-4389-91cb-1bd58bbb93bb
+  spec:
+    progressDeadlineSeconds: 600
+    replicas: 2
+    revisionHistoryLimit: 10
+    selector:
+      matchLabels:
+        app: backend
+    strategy:
+      rollingUpdate:
+        maxSurge: 25%
+        maxUnavailable: 25%
+      type: RollingUpdate
+    template:
+      metadata:
+        labels:
+          app: backend
+          version: 1.0.0
+      spec:
+        containers:
+        - envFrom:
+          - configMapRef:
+              name: app-config
+          - secretRef:
+              name: postgres-local
+          image: terrasense-backend:1.0.0
+          imagePullPolicy: Never
+          livenessProbe:
+            failureThreshold: 3
+            periodSeconds: 10
+            successThreshold: 1
+            tcpSocket:
+              port: 3000
+            timeoutSeconds: 1
+          name: backend
+          ports:
+          - containerPort: 3000
+            protocol: TCP
+          readinessProbe:
+            failureThreshold: 3
+            httpGet:
+              path: /metrics/ESP32-INV-01/latest?sensorType=temp,airHum,soilHum,waterLevel
+              port: 3000
+              scheme: HTTP
+            periodSeconds: 5
+            successThreshold: 1
+            timeoutSeconds: 2
+          resources:
+            limits:
+              cpu: 500m
+              memory: 384Mi
+            requests:
+              cpu: 100m
+              memory: 128Mi
+          startupProbe:
+            failureThreshold: 60
+            periodSeconds: 3
+            successThreshold: 1
+            tcpSocket:
+              port: 3000
+            timeoutSeconds: 1
+          terminationMessagePath: /dev/termination-log
+          terminationMessagePolicy: File
+        dnsPolicy: ClusterFirst
+        restartPolicy: Always
+        schedulerName: default-scheduler
+        securityContext: {}
+        terminationGracePeriodSeconds: 30
+  status:
+    availableReplicas: 2
+    conditions:
+    - lastTransitionTime: "2026-11-19T14:10:07Z"
+      lastUpdateTime: "2026-11-19T14:10:11Z"
+      message: ReplicaSet "backend-5d57b7f774" has successfully progressed.
+      reason: NewReplicaSetAvailable
+      status: "True"
+      type: Progressing
+    - lastTransitionTime: "2026-11-19T14:10:30Z"
+      lastUpdateTime: "2026-11-19T14:10:30Z"
+      message: Deployment has minimum availability.
+      reason: MinimumReplicasAvailable
+      status: "True"
+      type: Available
+    observedGeneration: 2
+    readyReplicas: 2
+    replicas: 2
+    updatedReplicas: 2
+- apiVersion: apps/v1
+  kind: Deployment
+  metadata:
+    annotations:
+      deployment.kubernetes.io/revision: "1"
+      kubectl.kubernetes.io/last-applied-configuration: |
+        {"apiVersion":"apps/v1","kind":"Deployment","metadata":{"annotations":{},"name":"front-canary","namespace":"terrasense-final"},"spec":{"replicas":2,"selector":{"matchLabels":{"app":"front","track":"canary"}},"strategy":{"rollingUpdate":{"maxSurge":1,"maxUnavailable":0},"type":"RollingUpdate"},"template":{"metadata":{"labels":{"app":"front","track":"canary","version":"1.1.0"}},"spec":{"containers":[{"image":"terrasense-frontend:1.1.0","imagePullPolicy":"Never","livenessProbe":{"httpGet":{"path":"/version.txt","port":3000},"periodSeconds":15,"timeoutSeconds":2},"name":"front","ports":[{"containerPort":3000}],"readinessProbe":{"httpGet":{"path":"/version.txt","port":3000},"periodSeconds":5,"timeoutSeconds":2},"resources":{"limits":{"cpu":"500m","memory":"384Mi"},"requests":{"cpu":"100m","memory":"128Mi"}},"startupProbe":{"failureThreshold":60,"httpGet":{"path":"/version.txt","port":3000},"periodSeconds":5}}],"terminationGracePeriodSeconds":30}}}}
+    creationTimestamp: "2026-11-19T14:10:12Z"
+    generation: 1
+    name: front-canary
+    namespace: terrasense-final
+    resourceVersion: "957"
+    uid: 6946a60c-afe9-4b20-965d-7e171eb2a31a
+  spec:
+    progressDeadlineSeconds: 600
+    replicas: 2
+    revisionHistoryLimit: 10
+    selector:
+      matchLabels:
+        app: front
+        track: canary
+    strategy:
+      rollingUpdate:
+        maxSurge: 1
+        maxUnavailable: 0
+      type: RollingUpdate
+    template:
+      metadata:
+        labels:
+          app: front
+          track: canary
+          version: 1.1.0
+      spec:
+        containers:
+        - image: terrasense-frontend:1.1.0
+          imagePullPolicy: Never
+          livenessProbe:
+            failureThreshold: 3
+            httpGet:
+              path: /version.txt
+              port: 3000
+              scheme: HTTP
+            periodSeconds: 15
+            successThreshold: 1
+            timeoutSeconds: 2
+          name: front
+          ports:
+          - containerPort: 3000
+            protocol: TCP
+          readinessProbe:
+            failureThreshold: 3
+            httpGet:
+              path: /version.txt
+              port: 3000
+              scheme: HTTP
+            periodSeconds: 5
+            successThreshold: 1
+            timeoutSeconds: 2
+          resources:
+            limits:
+              cpu: 500m
+              memory: 384Mi
+            requests:
+              cpu: 100m
+              memory: 128Mi
+          startupProbe:
+            failureThreshold: 60
+            httpGet:
+              path: /version.txt
+              port: 3000
+              scheme: HTTP
+            periodSeconds: 5
+            successThreshold: 1
+            timeoutSeconds: 1
+          terminationMessagePath: /dev/termination-log
+          terminationMessagePolicy: File
+        dnsPolicy: ClusterFirst
+        restartPolicy: Always
+        schedulerName: default-scheduler
+        securityContext: {}
+        terminationGracePeriodSeconds: 30
+  status:
+    availableReplicas: 2
+    conditions:
+    - lastTransitionTime: "2026-11-19T14:10:18Z"
+      lastUpdateTime: "2026-11-19T14:10:18Z"
+      message: Deployment has minimum availability.
+      reason: MinimumReplicasAvailable
+      status: "True"
+      type: Available
+    - lastTransitionTime: "2026-11-19T14:10:12Z"
+      lastUpdateTime: "2026-11-19T14:10:18Z"
+      message: ReplicaSet "front-canary-89c47b5c4" has successfully progressed.
+      reason: NewReplicaSetAvailable
+      status: "True"
+      type: Progressing
+    observedGeneration: 1
+    readyReplicas: 2
+    replicas: 2
+    updatedReplicas: 2
+- apiVersion: apps/v1
+  kind: Deployment
+  metadata:
+    annotations:
+      deployment.kubernetes.io/revision: "1"
+      kubectl.kubernetes.io/last-applied-configuration: |
+        {"apiVersion":"apps/v1","kind":"Deployment","metadata":{"annotations":{},"name":"front-stable","namespace":"terrasense-final"},"spec":{"replicas":2,"selector":{"matchLabels":{"app":"front","track":"stable"}},"strategy":{"rollingUpdate":{"maxSurge":1,"maxUnavailable":0},"type":"RollingUpdate"},"template":{"metadata":{"labels":{"app":"front","track":"stable","version":"1.0.0"}},"spec":{"containers":[{"image":"terrasense-frontend:1.0.0","imagePullPolicy":"Never","livenessProbe":{"httpGet":{"path":"/version.txt","port":3000},"periodSeconds":15,"timeoutSeconds":2},"name":"front","ports":[{"containerPort":3000}],"readinessProbe":{"httpGet":{"path":"/version.txt","port":3000},"periodSeconds":5,"timeoutSeconds":2},"resources":{"limits":{"cpu":"500m","memory":"384Mi"},"requests":{"cpu":"100m","memory":"128Mi"}},"startupProbe":{"failureThreshold":60,"httpGet":{"path":"/version.txt","port":3000},"periodSeconds":5}}],"terminationGracePeriodSeconds":30}}}}
+    creationTimestamp: "2026-11-19T14:10:12Z"
+    generation: 1
+    name: front-stable
+    namespace: terrasense-final
+    resourceVersion: "953"
+    uid: 8014d95b-1e10-4388-a1c1-578e35aa4242
+  spec:
+    progressDeadlineSeconds: 600
+    replicas: 2
+    revisionHistoryLimit: 10
+    selector:
+      matchLabels:
+        app: front
+        track: stable
+    strategy:
+      rollingUpdate:
+        maxSurge: 1
+        maxUnavailable: 0
+      type: RollingUpdate
+    template:
+      metadata:
+        labels:
+          app: front
+          track: stable
+          version: 1.0.0
+      spec:
+        containers:
+        - image: terrasense-frontend:1.0.0
+          imagePullPolicy: Never
+          livenessProbe:
+            failureThreshold: 3
+            httpGet:
+              path: /version.txt
+              port: 3000
+              scheme: HTTP
+            periodSeconds: 15
+            successThreshold: 1
+            timeoutSeconds: 2
+          name: front
+          ports:
+          - containerPort: 3000
+            protocol: TCP
+          readinessProbe:
+            failureThreshold: 3
+            httpGet:
+              path: /version.txt
+              port: 3000
+              scheme: HTTP
+            periodSeconds: 5
+            successThreshold: 1
+            timeoutSeconds: 2
+          resources:
+            limits:
+              cpu: 500m
+              memory: 384Mi
+            requests:
+              cpu: 100m
+              memory: 128Mi
+          startupProbe:
+            failureThreshold: 60
+            httpGet:
+              path: /version.txt
+              port: 3000
+              scheme: HTTP
+            periodSeconds: 5
+            successThreshold: 1
+            timeoutSeconds: 1
+          terminationMessagePath: /dev/termination-log
+          terminationMessagePolicy: File
+        dnsPolicy: ClusterFirst
+        restartPolicy: Always
+        schedulerName: default-scheduler
+        securityContext: {}
+        terminationGracePeriodSeconds: 30
+  status:
+    availableReplicas: 2
+    conditions:
+    - lastTransitionTime: "2026-11-19T14:10:18Z"
+      lastUpdateTime: "2026-11-19T14:10:18Z"
+      message: Deployment has minimum availability.
+      reason: MinimumReplicasAvailable
+      status: "True"
+      type: Available
+    - lastTransitionTime: "2026-11-19T14:10:12Z"
+      lastUpdateTime: "2026-11-19T14:10:18Z"
+      message: ReplicaSet "front-stable-5d58f4dcb7" has successfully progressed.
+      reason: NewReplicaSetAvailable
+      status: "True"
+      type: Progressing
+    observedGeneration: 1
+    readyReplicas: 2
+    replicas: 2
+    updatedReplicas: 2
+- apiVersion: apps/v1
+  kind: StatefulSet
+  metadata:
+    annotations:
+      kubectl.kubernetes.io/last-applied-configuration: |
+        {"apiVersion":"apps/v1","kind":"StatefulSet","metadata":{"annotations":{},"name":"postgres","namespace":"terrasense-final"},"spec":{"replicas":1,"selector":{"matchLabels":{"app":"postgres"}},"serviceName":"postgres","template":{"metadata":{"labels":{"app":"postgres"}},"spec":{"containers":[{"env":[{"name":"PGDATA","value":"/var/lib/postgresql/data/pgdata"}],"envFrom":[{"configMapRef":{"name":"app-config"}},{"secretRef":{"name":"postgres-local"}}],"image":"postgres:16-alpine","name":"postgres","ports":[{"containerPort":5432}],"readinessProbe":{"exec":{"command":["sh","-c","pg_isready -U \"$POSTGRES_USER\" -d \"$POSTGRES_DB\""]},"periodSeconds":5},"resources":{"limits":{"cpu":"1","memory":"1Gi"},"requests":{"cpu":"250m","memory":"256Mi"}},"startupProbe":{"exec":{"command":["sh","-c","pg_isready -U \"$POSTGRES_USER\" -d \"$POSTGRES_DB\""]},"failureThreshold":60,"periodSeconds":5},"volumeMounts":[{"mountPath":"/var/lib/postgresql/data","name":"data"}]}]}},"volumeClaimTemplates":[{"metadata":{"name":"data"},"spec":{"accessModes":["ReadWriteOnce"],"resources":{"requests":{"storage":"5Gi"}}}}]}}
+    creationTimestamp: "2026-11-19T14:09:56Z"
+    generation: 1
+    name: postgres
+    namespace: terrasense-final
+    resourceVersion: "818"
+    uid: 9664dd5c-34ae-485c-9d74-f9a5ef938322
+  spec:
+    persistentVolumeClaimRetentionPolicy:
+      whenDeleted: Retain
+      whenScaled: Retain
+    podManagementPolicy: OrderedReady
+    replicas: 1
+    revisionHistoryLimit: 10
+    selector:
+      matchLabels:
+        app: postgres
+    serviceName: postgres
+    template:
+      metadata:
+        labels:
+          app: postgres
+      spec:
+        containers:
+        - env:
+          - name: PGDATA
+            value: /var/lib/postgresql/data/pgdata
+          envFrom:
+          - configMapRef:
+              name: app-config
+          - secretRef:
+              name: postgres-local
+          image: postgres:16-alpine
+          imagePullPolicy: IfNotPresent
+          name: postgres
+          ports:
+          - containerPort: 5432
+            protocol: TCP
+          readinessProbe:
+            exec:
+              command:
+              - sh
+              - -c
+              - pg_isready -U "$POSTGRES_USER" -d "$POSTGRES_DB"
+            failureThreshold: 3
+            periodSeconds: 5
+            successThreshold: 1
+            timeoutSeconds: 1
+          resources:
+            limits:
+              cpu: "1"
+              memory: 1Gi
+            requests:
+              cpu: 250m
+              memory: 256Mi
+          startupProbe:
+            exec:
+              command:
+              - sh
+              - -c
+              - pg_isready -U "$POSTGRES_USER" -d "$POSTGRES_DB"
+            failureThreshold: 60
+            periodSeconds: 5
+            successThreshold: 1
+            timeoutSeconds: 1
+          terminationMessagePath: /dev/termination-log
+          terminationMessagePolicy: File
+          volumeMounts:
+          - mountPath: /var/lib/postgresql/data
+            name: data
+        dnsPolicy: ClusterFirst
+        restartPolicy: Always
+        schedulerName: default-scheduler
+        securityContext: {}
+        terminationGracePeriodSeconds: 30
+    updateStrategy:
+      rollingUpdate:
+        partition: 0
+      type: RollingUpdate
+    volumeClaimTemplates:
+    - apiVersion: v1
+      kind: PersistentVolumeClaim
+      metadata:
+        name: data
+      spec:
+        accessModes:
+        - ReadWriteOnce
+        resources:
+          requests:
+            storage: 5Gi
+        volumeMode: Filesystem
+      status:
+        phase: Pending
+  status:
+    availableReplicas: 1
+    collisionCount: 0
+    currentReplicas: 1
+    currentRevision: postgres-64f6cb6b5d
+    observedGeneration: 1
+    readyReplicas: 1
+    replicas: 1
+    updateRevision: postgres-64f6cb6b5d
+    updatedReplicas: 1
+- apiVersion: v1
+  kind: Service
+  metadata:
+    annotations:
+      kubectl.kubernetes.io/last-applied-configuration: |
+        {"apiVersion":"v1","kind":"Service","metadata":{"annotations":{},"name":"backend","namespace":"terrasense-final"},"spec":{"ports":[{"port":3000,"targetPort":3000}],"selector":{"app":"backend"},"type":"ClusterIP"}}
+    creationTimestamp: "2026-11-19T14:10:07Z"
+    name: backend
+    namespace: terrasense-final
+    resourceVersion: "822"
+    uid: e865cbd2-3f0d-457c-a1ee-c1ce1d721f89
+  spec:
+    clusterIP: 10.97.237.22
+    clusterIPs:
+    - 10.97.237.22
+    internalTrafficPolicy: Cluster
+    ipFamilies:
+    - IPv4
+    ipFamilyPolicy: SingleStack
+    ports:
+    - port: 3000
+      protocol: TCP
+      targetPort: 3000
+    selector:
+      app: backend
+    sessionAffinity: None
+    type: ClusterIP
+  status:
+    loadBalancer: {}
+- apiVersion: v1
+  kind: Service
+  metadata:
+    annotations:
+      kubectl.kubernetes.io/last-applied-configuration: |
+        {"apiVersion":"v1","kind":"Service","metadata":{"annotations":{},"name":"front-canary","namespace":"terrasense-final"},"spec":{"ports":[{"port":3000,"targetPort":3000}],"selector":{"app":"front","track":"canary"},"type":"ClusterIP"}}
+    creationTimestamp: "2026-11-19T14:10:12Z"
+    name: front-canary
+    namespace: terrasense-final
+    resourceVersion: "854"
+    uid: 1e746034-c066-4d28-9588-8e246ff39d4f
+  spec:
+    clusterIP: 10.106.196.107
+    clusterIPs:
+    - 10.106.196.107
+    internalTrafficPolicy: Cluster
+    ipFamilies:
+    - IPv4
+    ipFamilyPolicy: SingleStack
+    ports:
+    - port: 3000
+      protocol: TCP
+      targetPort: 3000
+    selector:
+      app: front
+      track: canary
+    sessionAffinity: None
+    type: ClusterIP
+  status:
+    loadBalancer: {}
+- apiVersion: v1
+  kind: Service
+  metadata:
+    annotations:
+      kubectl.kubernetes.io/last-applied-configuration: |
+        {"apiVersion":"v1","kind":"Service","metadata":{"annotations":{},"name":"front-stable","namespace":"terrasense-final"},"spec":{"ports":[{"port":3000,"targetPort":3000}],"selector":{"app":"front","track":"stable"},"type":"ClusterIP"}}
+    creationTimestamp: "2026-11-19T14:10:12Z"
+    name: front-stable
+    namespace: terrasense-final
+    resourceVersion: "858"
+    uid: aeaee90c-524c-4bef-9ae6-686a30d64534
+  spec:
+    clusterIP: 10.108.159.112
+    clusterIPs:
+    - 10.108.159.112
+    internalTrafficPolicy: Cluster
+    ipFamilies:
+    - IPv4
+    ipFamilyPolicy: SingleStack
+    ports:
+    - port: 3000
+      protocol: TCP
+      targetPort: 3000
+    selector:
+      app: front
+      track: stable
+    sessionAffinity: None
+    type: ClusterIP
+  status:
+    loadBalancer: {}
+- apiVersion: v1
+  kind: Service
+  metadata:
+    annotations:
+      kubectl.kubernetes.io/last-applied-configuration: |
+        {"apiVersion":"v1","kind":"Service","metadata":{"annotations":{},"name":"postgres","namespace":"terrasense-final"},"spec":{"clusterIP":"None","ports":[{"port":5432,"targetPort":5432}],"selector":{"app":"postgres"}}}
+    creationTimestamp: "2026-11-19T14:09:56Z"
+    name: postgres
+    namespace: terrasense-final
+    resourceVersion: "769"
+    uid: 15a9d34b-8ba5-433d-a4bd-7038c228081c
+  spec:
+    clusterIP: None
+    clusterIPs:
+    - None
+    internalTrafficPolicy: Cluster
+    ipFamilies:
+    - IPv4
+    ipFamilyPolicy: SingleStack
+    ports:
+    - port: 5432
+      protocol: TCP
+      targetPort: 5432
+    selector:
+      app: postgres
+    sessionAffinity: None
+    type: ClusterIP
+  status:
+    loadBalancer: {}
+- apiVersion: networking.k8s.io/v1
+  kind: Ingress
+  metadata:
+    annotations:
+      kubectl.kubernetes.io/last-applied-configuration: |
+        {"apiVersion":"networking.k8s.io/v1","kind":"Ingress","metadata":{"annotations":{"nginx.ingress.kubernetes.io/cors-allow-headers":"Content-Type","nginx.ingress.kubernetes.io/cors-allow-methods":"GET, POST, OPTIONS","nginx.ingress.kubernetes.io/cors-allow-origin":"http://terrasense.local","nginx.ingress.kubernetes.io/enable-cors":"true"},"name":"api","namespace":"terrasense-final"},"spec":{"ingressClassName":"nginx","rules":[{"host":"api.terrasense.local","http":{"paths":[{"backend":{"service":{"name":"backend","port":{"number":3000}}},"path":"/","pathType":"Prefix"}]}}]}}
+      nginx.ingress.kubernetes.io/cors-allow-headers: Content-Type
+      nginx.ingress.kubernetes.io/cors-allow-methods: GET, POST, OPTIONS
+      nginx.ingress.kubernetes.io/cors-allow-origin: http://terrasense.local
+      nginx.ingress.kubernetes.io/enable-cors: "true"
+    creationTimestamp: "2026-11-19T14:10:12Z"
+    generation: 1
+    name: api
+    namespace: terrasense-final
+    resourceVersion: "1007"
+    uid: cdfb2f78-227d-49ab-b842-7eadec9d7610
+  spec:
+    ingressClassName: nginx
+    rules:
+    - host: api.terrasense.local
+      http:
+        paths:
+        - backend:
+            service:
+              name: backend
+              port:
+                number: 3000
+          path: /
+          pathType: Prefix
+  status:
+    loadBalancer:
+      ingress:
+      - ip: 192.168.85.2
+- apiVersion: networking.k8s.io/v1
+  kind: Ingress
+  metadata:
+    annotations:
+      kubectl.kubernetes.io/last-applied-configuration: |
+        {"apiVersion":"networking.k8s.io/v1","kind":"Ingress","metadata":{"annotations":{"nginx.ingress.kubernetes.io/affinity":"cookie","nginx.ingress.kubernetes.io/affinity-mode":"persistent","nginx.ingress.kubernetes.io/session-cookie-change-on-failure":"true","nginx.ingress.kubernetes.io/session-cookie-max-age":"600","nginx.ingress.kubernetes.io/session-cookie-name":"TERRASENSE_ROUTE"},"name":"front","namespace":"terrasense-final"},"spec":{"ingressClassName":"nginx","rules":[{"host":"terrasense.local","http":{"paths":[{"backend":{"service":{"name":"front-stable","port":{"number":3000}}},"path":"/","pathType":"Prefix"}]}}]}}
+      nginx.ingress.kubernetes.io/affinity: cookie
+      nginx.ingress.kubernetes.io/affinity-mode: persistent
+      nginx.ingress.kubernetes.io/session-cookie-change-on-failure: "true"
+      nginx.ingress.kubernetes.io/session-cookie-max-age: "600"
+      nginx.ingress.kubernetes.io/session-cookie-name: TERRASENSE_ROUTE
+    creationTimestamp: "2026-11-19T14:10:12Z"
+    generation: 1
+    name: front
+    namespace: terrasense-final
+    resourceVersion: "1006"
+    uid: 5b1a6a30-560d-4486-9cae-aac307196234
+  spec:
+    ingressClassName: nginx
+    rules:
+    - host: terrasense.local
+      http:
+        paths:
+        - backend:
+            service:
+              name: front-stable
+              port:
+                number: 3000
+          path: /
+          pathType: Prefix
+  status:
+    loadBalancer:
+      ingress:
+      - ip: 192.168.85.2
+- apiVersion: networking.k8s.io/v1
+  kind: Ingress
+  metadata:
+    annotations:
+      kubectl.kubernetes.io/last-applied-configuration: |
+        {"apiVersion":"networking.k8s.io/v1","kind":"Ingress","metadata":{"annotations":{"nginx.ingress.kubernetes.io/affinity-canary-behavior":"sticky","nginx.ingress.kubernetes.io/canary":"true","nginx.ingress.kubernetes.io/canary-by-cookie":"TERRASENSE_QA","nginx.ingress.kubernetes.io/canary-by-header":"X-Canary","nginx.ingress.kubernetes.io/canary-weight":"0"},"name":"front-canary","namespace":"terrasense-final"},"spec":{"ingressClassName":"nginx","rules":[{"host":"terrasense.local","http":{"paths":[{"backend":{"service":{"name":"front-canary","port":{"number":3000}}},"path":"/","pathType":"Prefix"}]}}]}}
+      nginx.ingress.kubernetes.io/affinity-canary-behavior: sticky
+      nginx.ingress.kubernetes.io/canary: "true"
+      nginx.ingress.kubernetes.io/canary-by-cookie: TERRASENSE_QA
+      nginx.ingress.kubernetes.io/canary-by-header: X-Canary
+      nginx.ingress.kubernetes.io/canary-weight: "0"
+    creationTimestamp: "2026-11-19T14:10:12Z"
+    generation: 1
+    name: front-canary
+    namespace: terrasense-final
+    resourceVersion: "1008"
+    uid: 0e991908-50ce-4ba1-b974-8e7fa0d1570d
+  spec:
+    ingressClassName: nginx
+    rules:
+    - host: terrasense.local
+      http:
+        paths:
+        - backend:
+            service:
+              name: front-canary
+              port:
+                number: 3000
+          path: /
+          pathType: Prefix
+  status:
+    loadBalancer:
+      ingress:
+      - ip: 192.168.85.2
+- apiVersion: autoscaling/v2
+  kind: HorizontalPodAutoscaler
+  metadata:
+    annotations:
+      kubectl.kubernetes.io/last-applied-configuration: |
+        {"apiVersion":"autoscaling/v2","kind":"HorizontalPodAutoscaler","metadata":{"annotations":{},"name":"backend","namespace":"terrasense-final"},"spec":{"behavior":{"scaleDown":{"stabilizationWindowSeconds":120}},"maxReplicas":6,"metrics":[{"resource":{"name":"cpu","target":{"averageUtilization":60,"type":"Utilization"}},"type":"Resource"}],"minReplicas":2,"scaleTargetRef":{"apiVersion":"apps/v1","kind":"Deployment","name":"backend"}}}
+    creationTimestamp: "2026-11-19T14:10:12Z"
+    name: backend
+    namespace: terrasense-final
+    resourceVersion: "1888"
+    uid: 5aefdd9d-95e0-40e3-90f6-49e592a4dcc4
+  spec:
+    behavior:
+      scaleDown:
+        policies:
+        - periodSeconds: 15
+          type: Percent
+          value: 100
+        selectPolicy: Max
+        stabilizationWindowSeconds: 120
+      scaleUp:
+        policies:
+        - periodSeconds: 15
+          type: Pods
+          value: 4
+        - periodSeconds: 15
+          type: Percent
+          value: 100
+        selectPolicy: Max
+        stabilizationWindowSeconds: 0
+    maxReplicas: 6
+    metrics:
+    - resource:
+        name: cpu
+        target:
+          averageUtilization: 60
+          type: Utilization
+      type: Resource
+    minReplicas: 2
+    scaleTargetRef:
+      apiVersion: apps/v1
+      kind: Deployment
+      name: backend
+  status:
+    conditions:
+    - lastTransitionTime: "2026-11-19T14:10:27Z"
+      message: recommended size matches current size
+      reason: ReadyForNewScale
+      status: "True"
+      type: AbleToScale
+    - lastTransitionTime: "2026-11-19T14:11:57Z"
+      message: the HPA was able to successfully calculate a replica count from cpu
+        resource utilization (percentage of request)
+      reason: ValidMetricFound
+      status: "True"
+      type: ScalingActive
+    - lastTransitionTime: "2026-11-19T14:11:57Z"
+      message: the desired replica count is less than the minimum replica count
+      reason: TooFewReplicas
+      status: "True"
+      type: ScalingLimited
+    currentMetrics:
+    - resource:
+        current:
+          averageUtilization: 2
+          averageValue: 2m
+        name: cpu
+      type: Resource
+    currentReplicas: 2
+    desiredReplicas: 2
+    lastScaleTime: "2026-11-19T14:10:27Z"
+- apiVersion: v1
+  kind: Pod
+  metadata:
+    creationTimestamp: "2026-11-19T14:10:07Z"
+    generateName: backend-5d57b7f774-
+    generation: 1
+    labels:
+      app: backend
+      pod-template-hash: 5d57b7f774
+      version: 1.0.0
+    name: backend-5d57b7f774-8jzhz
+    namespace: terrasense-final
+    ownerReferences:
+    - apiVersion: apps/v1
+      blockOwnerDeletion: true
+      controller: true
+      kind: ReplicaSet
+      name: backend-5d57b7f774
+      uid: c3e706ee-1827-4d31-824f-05e078dcfdde
+    resourceVersion: "846"
+    uid: cdbba50b-a959-40e1-87bc-74bcc3bf417f
+  spec:
+    containers:
+    - envFrom:
+      - configMapRef:
+          name: app-config
+      - secretRef:
+          name: postgres-local
+      image: terrasense-backend:1.0.0
+      imagePullPolicy: Never
+      livenessProbe:
+        failureThreshold: 3
+        periodSeconds: 10
+        successThreshold: 1
+        tcpSocket:
+          port: 3000
+        timeoutSeconds: 1
+      name: backend
+      ports:
+      - containerPort: 3000
+        protocol: TCP
+      readinessProbe:
+        failureThreshold: 3
+        httpGet:
+          path: /metrics/ESP32-INV-01/latest?sensorType=temp,airHum,soilHum,waterLevel
+          port: 3000
+          scheme: HTTP
+        periodSeconds: 5
+        successThreshold: 1
+        timeoutSeconds: 2
+      resources:
+        limits:
+          cpu: 500m
+          memory: 384Mi
+        requests:
+          cpu: 100m
+          memory: 128Mi
+      startupProbe:
+        failureThreshold: 60
+        periodSeconds: 3
+        successThreshold: 1
+        tcpSocket:
+          port: 3000
+        timeoutSeconds: 1
+      terminationMessagePath: /dev/termination-log
+      terminationMessagePolicy: File
+      volumeMounts:
+      - mountPath: /var/run/secrets/kubernetes.io/serviceaccount
+        name: kube-api-access-b478w
+        readOnly: true
+    dnsPolicy: ClusterFirst
+    enableServiceLinks: true
+    nodeName: terrasense-final
+    preemptionPolicy: PreemptLowerPriority
+    priority: 0
+    restartPolicy: Always
+    schedulerName: default-scheduler
+    securityContext: {}
+    serviceAccount: default
+    serviceAccountName: default
+    terminationGracePeriodSeconds: 30
+    tolerations:
+    - effect: NoExecute
+      key: node.kubernetes.io/not-ready
+      operator: Exists
+      tolerationSeconds: 300
+    - effect: NoExecute
+      key: node.kubernetes.io/unreachable
+      operator: Exists
+      tolerationSeconds: 300
+    volumes:
+    - name: kube-api-access-b478w
+      projected:
+        defaultMode: 420
+        sources:
+        - serviceAccountToken:
+            expirationSeconds: 3607
+            path: token
+        - configMap:
+            items:
+            - key: ca.crt
+              path: ca.crt
+            name: kube-root-ca.crt
+        - downwardAPI:
+            items:
+            - fieldRef:
+                apiVersion: v1
+                fieldPath: metadata.namespace
+              path: namespace
+  status:
+    conditions:
+    - lastProbeTime: null
+      lastTransitionTime: "2026-11-19T14:10:08Z"
+      observedGeneration: 1
+      status: "True"
+      type: PodReadyToStartContainers
+    - lastProbeTime: null
+      lastTransitionTime: "2026-11-19T14:10:07Z"
+      observedGeneration: 1
+      status: "True"
+      type: Initialized
+    - lastProbeTime: null
+      lastTransitionTime: "2026-11-19T14:10:11Z"
+      observedGeneration: 1
+      status: "True"
+      type: Ready
+    - lastProbeTime: null
+      lastTransitionTime: "2026-11-19T14:10:11Z"
+      observedGeneration: 1
+      status: "True"
+      type: ContainersReady
+    - lastProbeTime: null
+      lastTransitionTime: "2026-11-19T14:10:07Z"
+      observedGeneration: 1
+      status: "True"
+      type: PodScheduled
+    containerStatuses:
+    - allocatedResources:
+        cpu: 100m
+        memory: 128Mi
+      containerID: containerd://f21b162b6424f6ed734afe4e15838c6f07aa6f1871a5f0260be24a1f4e7dace2
+      image: docker.io/library/terrasense-backend:1.0.0
+      imageID: sha256:cb703558559c80c4569e446f66f2db936127286cd5910fedef00745fe9fc0518
+      lastState: {}
+      name: backend
+      ready: true
+      resources:
+        limits:
+          cpu: 500m
+          memory: 384Mi
+        requests:
+          cpu: 100m
+          memory: 128Mi
+      restartCount: 0
+      started: true
+      state:
+        running:
+          startedAt: "2026-11-19T14:10:08Z"
+      user:
+        linux:
+          gid: 1000
+          supplementalGroups:
+          - 1000
+          uid: 1000
+      volumeMounts:
+      - mountPath: /var/run/secrets/kubernetes.io/serviceaccount
+        name: kube-api-access-b478w
+        readOnly: true
+        recursiveReadOnly: Disabled
+    hostIP: 192.168.85.2
+    hostIPs:
+    - ip: 192.168.85.2
+    observedGeneration: 1
+    phase: Running
+    podIP: 10.244.0.9
+    podIPs:
+    - ip: 10.244.0.9
+    qosClass: Burstable
+    startTime: "2026-11-19T14:10:07Z"
+- apiVersion: v1
+  kind: Pod
+  metadata:
+    creationTimestamp: "2026-11-19T14:10:27Z"
+    generateName: backend-5d57b7f774-
+    generation: 1
+    labels:
+      app: backend
+      pod-template-hash: 5d57b7f774
+      version: 1.0.0
+    name: backend-5d57b7f774-nc8qw
+    namespace: terrasense-final
+    ownerReferences:
+    - apiVersion: apps/v1
+      blockOwnerDeletion: true
+      controller: true
+      kind: ReplicaSet
+      name: backend-5d57b7f774
+      uid: c3e706ee-1827-4d31-824f-05e078dcfdde
+    resourceVersion: "991"
+    uid: eccc7c8c-6d7b-451b-9706-0ea945568e8d
+  spec:
+    containers:
+    - envFrom:
+      - configMapRef:
+          name: app-config
+      - secretRef:
+          name: postgres-local
+      image: terrasense-backend:1.0.0
+      imagePullPolicy: Never
+      livenessProbe:
+        failureThreshold: 3
+        periodSeconds: 10
+        successThreshold: 1
+        tcpSocket:
+          port: 3000
+        timeoutSeconds: 1
+      name: backend
+      ports:
+      - containerPort: 3000
+        protocol: TCP
+      readinessProbe:
+        failureThreshold: 3
+        httpGet:
+          path: /metrics/ESP32-INV-01/latest?sensorType=temp,airHum,soilHum,waterLevel
+          port: 3000
+          scheme: HTTP
+        periodSeconds: 5
+        successThreshold: 1
+        timeoutSeconds: 2
+      resources:
+        limits:
+          cpu: 500m
+          memory: 384Mi
+        requests:
+          cpu: 100m
+          memory: 128Mi
+      startupProbe:
+        failureThreshold: 60
+        periodSeconds: 3
+        successThreshold: 1
+        tcpSocket:
+          port: 3000
+        timeoutSeconds: 1
+      terminationMessagePath: /dev/termination-log
+      terminationMessagePolicy: File
+      volumeMounts:
+      - mountPath: /var/run/secrets/kubernetes.io/serviceaccount
+        name: kube-api-access-sbq2s
+        readOnly: true
+    dnsPolicy: ClusterFirst
+    enableServiceLinks: true
+    nodeName: terrasense-final
+    preemptionPolicy: PreemptLowerPriority
+    priority: 0
+    restartPolicy: Always
+    schedulerName: default-scheduler
+    securityContext: {}
+    serviceAccount: default
+    serviceAccountName: default
+    terminationGracePeriodSeconds: 30
+    tolerations:
+    - effect: NoExecute
+      key: node.kubernetes.io/not-ready
+      operator: Exists
+      tolerationSeconds: 300
+    - effect: NoExecute
+      key: node.kubernetes.io/unreachable
+      operator: Exists
+      tolerationSeconds: 300
+    volumes:
+    - name: kube-api-access-sbq2s
+      projected:
+        defaultMode: 420
+        sources:
+        - serviceAccountToken:
+            expirationSeconds: 3607
+            path: token
+        - configMap:
+            items:
+            - key: ca.crt
+              path: ca.crt
+            name: kube-root-ca.crt
+        - downwardAPI:
+            items:
+            - fieldRef:
+                apiVersion: v1
+                fieldPath: metadata.namespace
+              path: namespace
+  status:
+    conditions:
+    - lastProbeTime: null
+      lastTransitionTime: "2026-11-19T14:10:28Z"
+      observedGeneration: 1
+      status: "True"
+      type: PodReadyToStartContainers
+    - lastProbeTime: null
+      lastTransitionTime: "2026-11-19T14:10:27Z"
+      observedGeneration: 1
+      status: "True"
+      type: Initialized
+    - lastProbeTime: null
+      lastTransitionTime: "2026-11-19T14:10:30Z"
+      observedGeneration: 1
+      status: "True"
+      type: Ready
+    - lastProbeTime: null
+      lastTransitionTime: "2026-11-19T14:10:30Z"
+      observedGeneration: 1
+      status: "True"
+      type: ContainersReady
+    - lastProbeTime: null
+      lastTransitionTime: "2026-11-19T14:10:27Z"
+      observedGeneration: 1
+      status: "True"
+      type: PodScheduled
+    containerStatuses:
+    - allocatedResources:
+        cpu: 100m
+        memory: 128Mi
+      containerID: containerd://0848f82ce536287427b2d5891716f585e22cf686d48aba6ab4375b910cd65267
+      image: docker.io/library/terrasense-backend:1.0.0
+      imageID: sha256:cb703558559c80c4569e446f66f2db936127286cd5910fedef00745fe9fc0518
+      lastState: {}
+      name: backend
+      ready: true
+      resources:
+        limits:
+          cpu: 500m
+          memory: 384Mi
+        requests:
+          cpu: 100m
+          memory: 128Mi
+      restartCount: 0
+      started: true
+      state:
+        running:
+          startedAt: "2026-11-19T14:10:27Z"
+      user:
+        linux:
+          gid: 1000
+          supplementalGroups:
+          - 1000
+          uid: 1000
+      volumeMounts:
+      - mountPath: /var/run/secrets/kubernetes.io/serviceaccount
+        name: kube-api-access-sbq2s
+        readOnly: true
+        recursiveReadOnly: Disabled
+    hostIP: 192.168.85.2
+    hostIPs:
+    - ip: 192.168.85.2
+    observedGeneration: 1
+    phase: Running
+    podIP: 10.244.0.14
+    podIPs:
+    - ip: 10.244.0.14
+    qosClass: Burstable
+    startTime: "2026-11-19T14:10:27Z"
+- apiVersion: v1
+  kind: Pod
+  metadata:
+    creationTimestamp: "2026-11-19T14:10:12Z"
+    generateName: front-canary-89c47b5c4-
+    generation: 1
+    labels:
+      app: front
+      pod-template-hash: 89c47b5c4
+      track: canary
+      version: 1.1.0
+    name: front-canary-89c47b5c4-4jm7d
+    namespace: terrasense-final
+    ownerReferences:
+    - apiVersion: apps/v1
+      blockOwnerDeletion: true
+      controller: true
+      kind: ReplicaSet
+      name: front-canary-89c47b5c4
+      uid: a7288ff1-c582-4e86-b167-2b79d936b31d
+    resourceVersion: "952"
+    uid: b35ddbda-6c45-4578-b1d3-79c9073a5e5c
+  spec:
+    containers:
+    - image: terrasense-frontend:1.1.0
+      imagePullPolicy: Never
+      livenessProbe:
+        failureThreshold: 3
+        httpGet:
+          path: /version.txt
+          port: 3000
+          scheme: HTTP
+        periodSeconds: 15
+        successThreshold: 1
+        timeoutSeconds: 2
+      name: front
+      ports:
+      - containerPort: 3000
+        protocol: TCP
+      readinessProbe:
+        failureThreshold: 3
+        httpGet:
+          path: /version.txt
+          port: 3000
+          scheme: HTTP
+        periodSeconds: 5
+        successThreshold: 1
+        timeoutSeconds: 2
+      resources:
+        limits:
+          cpu: 500m
+          memory: 384Mi
+        requests:
+          cpu: 100m
+          memory: 128Mi
+      startupProbe:
+        failureThreshold: 60
+        httpGet:
+          path: /version.txt
+          port: 3000
+          scheme: HTTP
+        periodSeconds: 5
+        successThreshold: 1
+        timeoutSeconds: 1
+      terminationMessagePath: /dev/termination-log
+      terminationMessagePolicy: File
+      volumeMounts:
+      - mountPath: /var/run/secrets/kubernetes.io/serviceaccount
+        name: kube-api-access-dxs9r
+        readOnly: true
+    dnsPolicy: ClusterFirst
+    enableServiceLinks: true
+    nodeName: terrasense-final
+    preemptionPolicy: PreemptLowerPriority
+    priority: 0
+    restartPolicy: Always
+    schedulerName: default-scheduler
+    securityContext: {}
+    serviceAccount: default
+    serviceAccountName: default
+    terminationGracePeriodSeconds: 30
+    tolerations:
+    - effect: NoExecute
+      key: node.kubernetes.io/not-ready
+      operator: Exists
+      tolerationSeconds: 300
+    - effect: NoExecute
+      key: node.kubernetes.io/unreachable
+      operator: Exists
+      tolerationSeconds: 300
+    volumes:
+    - name: kube-api-access-dxs9r
+      projected:
+        defaultMode: 420
+        sources:
+        - serviceAccountToken:
+            expirationSeconds: 3607
+            path: token
+        - configMap:
+            items:
+            - key: ca.crt
+              path: ca.crt
+            name: kube-root-ca.crt
+        - downwardAPI:
+            items:
+            - fieldRef:
+                apiVersion: v1
+                fieldPath: metadata.namespace
+              path: namespace
+  status:
+    conditions:
+    - lastProbeTime: null
+      lastTransitionTime: "2026-11-19T14:10:13Z"
+      observedGeneration: 1
+      status: "True"
+      type: PodReadyToStartContainers
+    - lastProbeTime: null
+      lastTransitionTime: "2026-11-19T14:10:12Z"
+      observedGeneration: 1
+      status: "True"
+      type: Initialized
+    - lastProbeTime: null
+      lastTransitionTime: "2026-11-19T14:10:18Z"
+      observedGeneration: 1
+      status: "True"
+      type: Ready
+    - lastProbeTime: null
+      lastTransitionTime: "2026-11-19T14:10:18Z"
+      observedGeneration: 1
+      status: "True"
+      type: ContainersReady
+    - lastProbeTime: null
+      lastTransitionTime: "2026-11-19T14:10:12Z"
+      observedGeneration: 1
+      status: "True"
+      type: PodScheduled
+    containerStatuses:
+    - allocatedResources:
+        cpu: 100m
+        memory: 128Mi
+      containerID: containerd://07b7ec34d43c319863e51b414ae924b3d04ccd6b3d8a68f6b0a771fc63a372f6
+      image: docker.io/library/terrasense-frontend:1.1.0
+      imageID: sha256:8b6994291c265fddd75ff8627f17da376adff1febe7d966f1c8fb05d54f7303c
+      lastState: {}
+      name: front
+      ready: true
+      resources:
+        limits:
+          cpu: 500m
+          memory: 384Mi
+        requests:
+          cpu: 100m
+          memory: 128Mi
+      restartCount: 0
+      started: true
+      state:
+        running:
+          startedAt: "2026-11-19T14:10:12Z"
+      user:
+        linux:
+          gid: 1000
+          supplementalGroups:
+          - 1000
+          uid: 1000
+      volumeMounts:
+      - mountPath: /var/run/secrets/kubernetes.io/serviceaccount
+        name: kube-api-access-dxs9r
+        readOnly: true
+        recursiveReadOnly: Disabled
+    hostIP: 192.168.85.2
+    hostIPs:
+    - ip: 192.168.85.2
+    observedGeneration: 1
+    phase: Running
+    podIP: 10.244.0.11
+    podIPs:
+    - ip: 10.244.0.11
+    qosClass: Burstable
+    startTime: "2026-11-19T14:10:12Z"
+- apiVersion: v1
+  kind: Pod
+  metadata:
+    creationTimestamp: "2026-11-19T14:10:12Z"
+    generateName: front-canary-89c47b5c4-
+    generation: 1
+    labels:
+      app: front
+      pod-template-hash: 89c47b5c4
+      track: canary
+      version: 1.1.0
+    name: front-canary-89c47b5c4-fm7dp
+    namespace: terrasense-final
+    ownerReferences:
+    - apiVersion: apps/v1
+      blockOwnerDeletion: true
+      controller: true
+      kind: ReplicaSet
+      name: front-canary-89c47b5c4
+      uid: a7288ff1-c582-4e86-b167-2b79d936b31d
+    resourceVersion: "938"
+    uid: 181306fe-984a-4d5c-8e54-66302bf25595
+  spec:
+    containers:
+    - image: terrasense-frontend:1.1.0
+      imagePullPolicy: Never
+      livenessProbe:
+        failureThreshold: 3
+        httpGet:
+          path: /version.txt
+          port: 3000
+          scheme: HTTP
+        periodSeconds: 15
+        successThreshold: 1
+        timeoutSeconds: 2
+      name: front
+      ports:
+      - containerPort: 3000
+        protocol: TCP
+      readinessProbe:
+        failureThreshold: 3
+        httpGet:
+          path: /version.txt
+          port: 3000
+          scheme: HTTP
+        periodSeconds: 5
+        successThreshold: 1
+        timeoutSeconds: 2
+      resources:
+        limits:
+          cpu: 500m
+          memory: 384Mi
+        requests:
+          cpu: 100m
+          memory: 128Mi
+      startupProbe:
+        failureThreshold: 60
+        httpGet:
+          path: /version.txt
+          port: 3000
+          scheme: HTTP
+        periodSeconds: 5
+        successThreshold: 1
+        timeoutSeconds: 1
+      terminationMessagePath: /dev/termination-log
+      terminationMessagePolicy: File
+      volumeMounts:
+      - mountPath: /var/run/secrets/kubernetes.io/serviceaccount
+        name: kube-api-access-ksmvt
+        readOnly: true
+    dnsPolicy: ClusterFirst
+    enableServiceLinks: true
+    nodeName: terrasense-final
+    preemptionPolicy: PreemptLowerPriority
+    priority: 0
+    restartPolicy: Always
+    schedulerName: default-scheduler
+    securityContext: {}
+    serviceAccount: default
+    serviceAccountName: default
+    terminationGracePeriodSeconds: 30
+    tolerations:
+    - effect: NoExecute
+      key: node.kubernetes.io/not-ready
+      operator: Exists
+      tolerationSeconds: 300
+    - effect: NoExecute
+      key: node.kubernetes.io/unreachable
+      operator: Exists
+      tolerationSeconds: 300
+    volumes:
+    - name: kube-api-access-ksmvt
+      projected:
+        defaultMode: 420
+        sources:
+        - serviceAccountToken:
+            expirationSeconds: 3607
+            path: token
+        - configMap:
+            items:
+            - key: ca.crt
+              path: ca.crt
+            name: kube-root-ca.crt
+        - downwardAPI:
+            items:
+            - fieldRef:
+                apiVersion: v1
+                fieldPath: metadata.namespace
+              path: namespace
+  status:
+    conditions:
+    - lastProbeTime: null
+      lastTransitionTime: "2026-11-19T14:10:13Z"
+      observedGeneration: 1
+      status: "True"
+      type: PodReadyToStartContainers
+    - lastProbeTime: null
+      lastTransitionTime: "2026-11-19T14:10:12Z"
+      observedGeneration: 1
+      status: "True"
+      type: Initialized
+    - lastProbeTime: null
+      lastTransitionTime: "2026-11-19T14:10:18Z"
+      observedGeneration: 1
+      status: "True"
+      type: Ready
+    - lastProbeTime: null
+      lastTransitionTime: "2026-11-19T14:10:18Z"
+      observedGeneration: 1
+      status: "True"
+      type: ContainersReady
+    - lastProbeTime: null
+      lastTransitionTime: "2026-11-19T14:10:12Z"
+      observedGeneration: 1
+      status: "True"
+      type: PodScheduled
+    containerStatuses:
+    - allocatedResources:
+        cpu: 100m
+        memory: 128Mi
+      containerID: containerd://06a8390d0a2d3f3a88e303ae93b7cad5f66d03385cb66e55647d86e1a1947897
+      image: docker.io/library/terrasense-frontend:1.1.0
+      imageID: sha256:8b6994291c265fddd75ff8627f17da376adff1febe7d966f1c8fb05d54f7303c
+      lastState: {}
+      name: front
+      ready: true
+      resources:
+        limits:
+          cpu: 500m
+          memory: 384Mi
+        requests:
+          cpu: 100m
+          memory: 128Mi
+      restartCount: 0
+      started: true
+      state:
+        running:
+          startedAt: "2026-11-19T14:10:12Z"
+      user:
+        linux:
+          gid: 1000
+          supplementalGroups:
+          - 1000
+          uid: 1000
+      volumeMounts:
+      - mountPath: /var/run/secrets/kubernetes.io/serviceaccount
+        name: kube-api-access-ksmvt
+        readOnly: true
+        recursiveReadOnly: Disabled
+    hostIP: 192.168.85.2
+    hostIPs:
+    - ip: 192.168.85.2
+    observedGeneration: 1
+    phase: Running
+    podIP: 10.244.0.10
+    podIPs:
+    - ip: 10.244.0.10
+    qosClass: Burstable
+    startTime: "2026-11-19T14:10:12Z"
+- apiVersion: v1
+  kind: Pod
+  metadata:
+    creationTimestamp: "2026-11-19T14:10:12Z"
+    generateName: front-stable-5d58f4dcb7-
+    generation: 1
+    labels:
+      app: front
+      pod-template-hash: 5d58f4dcb7
+      track: stable
+      version: 1.0.0
+    name: front-stable-5d58f4dcb7-fgf77
+    namespace: terrasense-final
+    ownerReferences:
+    - apiVersion: apps/v1
+      blockOwnerDeletion: true
+      controller: true
+      kind: ReplicaSet
+      name: front-stable-5d58f4dcb7
+      uid: 8adb2b80-2abf-46c1-8056-2b000ce805ed
+    resourceVersion: "947"
+    uid: b06da969-1835-438a-9fd8-7c0de5ff82cb
+  spec:
+    containers:
+    - image: terrasense-frontend:1.0.0
+      imagePullPolicy: Never
+      livenessProbe:
+        failureThreshold: 3
+        httpGet:
+          path: /version.txt
+          port: 3000
+          scheme: HTTP
+        periodSeconds: 15
+        successThreshold: 1
+        timeoutSeconds: 2
+      name: front
+      ports:
+      - containerPort: 3000
+        protocol: TCP
+      readinessProbe:
+        failureThreshold: 3
+        httpGet:
+          path: /version.txt
+          port: 3000
+          scheme: HTTP
+        periodSeconds: 5
+        successThreshold: 1
+        timeoutSeconds: 2
+      resources:
+        limits:
+          cpu: 500m
+          memory: 384Mi
+        requests:
+          cpu: 100m
+          memory: 128Mi
+      startupProbe:
+        failureThreshold: 60
+        httpGet:
+          path: /version.txt
+          port: 3000
+          scheme: HTTP
+        periodSeconds: 5
+        successThreshold: 1
+        timeoutSeconds: 1
+      terminationMessagePath: /dev/termination-log
+      terminationMessagePolicy: File
+      volumeMounts:
+      - mountPath: /var/run/secrets/kubernetes.io/serviceaccount
+        name: kube-api-access-szn9n
+        readOnly: true
+    dnsPolicy: ClusterFirst
+    enableServiceLinks: true
+    nodeName: terrasense-final
+    preemptionPolicy: PreemptLowerPriority
+    priority: 0
+    restartPolicy: Always
+    schedulerName: default-scheduler
+    securityContext: {}
+    serviceAccount: default
+    serviceAccountName: default
+    terminationGracePeriodSeconds: 30
+    tolerations:
+    - effect: NoExecute
+      key: node.kubernetes.io/not-ready
+      operator: Exists
+      tolerationSeconds: 300
+    - effect: NoExecute
+      key: node.kubernetes.io/unreachable
+      operator: Exists
+      tolerationSeconds: 300
+    volumes:
+    - name: kube-api-access-szn9n
+      projected:
+        defaultMode: 420
+        sources:
+        - serviceAccountToken:
+            expirationSeconds: 3607
+            path: token
+        - configMap:
+            items:
+            - key: ca.crt
+              path: ca.crt
+            name: kube-root-ca.crt
+        - downwardAPI:
+            items:
+            - fieldRef:
+                apiVersion: v1
+                fieldPath: metadata.namespace
+              path: namespace
+  status:
+    conditions:
+    - lastProbeTime: null
+      lastTransitionTime: "2026-11-19T14:10:13Z"
+      observedGeneration: 1
+      status: "True"
+      type: PodReadyToStartContainers
+    - lastProbeTime: null
+      lastTransitionTime: "2026-11-19T14:10:12Z"
+      observedGeneration: 1
+      status: "True"
+      type: Initialized
+    - lastProbeTime: null
+      lastTransitionTime: "2026-11-19T14:10:18Z"
+      observedGeneration: 1
+      status: "True"
+      type: Ready
+    - lastProbeTime: null
+      lastTransitionTime: "2026-11-19T14:10:18Z"
+      observedGeneration: 1
+      status: "True"
+      type: ContainersReady
+    - lastProbeTime: null
+      lastTransitionTime: "2026-11-19T14:10:12Z"
+      observedGeneration: 1
+      status: "True"
+      type: PodScheduled
+    containerStatuses:
+    - allocatedResources:
+        cpu: 100m
+        memory: 128Mi
+      containerID: containerd://03f87d4659f0ccb3c3d6513008492bfdfbf3624de4c57be9b009c032e670746b
+      image: docker.io/library/terrasense-frontend:1.0.0
+      imageID: sha256:ff5b987a89a02417448d6b6ffc4ec4cb87544f47225eb4bf47d1d3831ab72917
+      lastState: {}
+      name: front
+      ready: true
+      resources:
+        limits:
+          cpu: 500m
+          memory: 384Mi
+        requests:
+          cpu: 100m
+          memory: 128Mi
+      restartCount: 0
+      started: true
+      state:
+        running:
+          startedAt: "2026-11-19T14:10:12Z"
+      user:
+        linux:
+          gid: 1000
+          supplementalGroups:
+          - 1000
+          uid: 1000
+      volumeMounts:
+      - mountPath: /var/run/secrets/kubernetes.io/serviceaccount
+        name: kube-api-access-szn9n
+        readOnly: true
+        recursiveReadOnly: Disabled
+    hostIP: 192.168.85.2
+    hostIPs:
+    - ip: 192.168.85.2
+    observedGeneration: 1
+    phase: Running
+    podIP: 10.244.0.12
+    podIPs:
+    - ip: 10.244.0.12
+    qosClass: Burstable
+    startTime: "2026-11-19T14:10:12Z"
+- apiVersion: v1
+  kind: Pod
+  metadata:
+    creationTimestamp: "2026-11-19T14:10:12Z"
+    generateName: front-stable-5d58f4dcb7-
+    generation: 1
+    labels:
+      app: front
+      pod-template-hash: 5d58f4dcb7
+      track: stable
+      version: 1.0.0
+    name: front-stable-5d58f4dcb7-tbkhb
+    namespace: terrasense-final
+    ownerReferences:
+    - apiVersion: apps/v1
+      blockOwnerDeletion: true
+      controller: true
+      kind: ReplicaSet
+      name: front-stable-5d58f4dcb7
+      uid: 8adb2b80-2abf-46c1-8056-2b000ce805ed
+    resourceVersion: "942"
+    uid: 81916ecc-96b8-4753-a27d-07b62e0cb251
+  spec:
+    containers:
+    - image: terrasense-frontend:1.0.0
+      imagePullPolicy: Never
+      livenessProbe:
+        failureThreshold: 3
+        httpGet:
+          path: /version.txt
+          port: 3000
+          scheme: HTTP
+        periodSeconds: 15
+        successThreshold: 1
+        timeoutSeconds: 2
+      name: front
+      ports:
+      - containerPort: 3000
+        protocol: TCP
+      readinessProbe:
+        failureThreshold: 3
+        httpGet:
+          path: /version.txt
+          port: 3000
+          scheme: HTTP
+        periodSeconds: 5
+        successThreshold: 1
+        timeoutSeconds: 2
+      resources:
+        limits:
+          cpu: 500m
+          memory: 384Mi
+        requests:
+          cpu: 100m
+          memory: 128Mi
+      startupProbe:
+        failureThreshold: 60
+        httpGet:
+          path: /version.txt
+          port: 3000
+          scheme: HTTP
+        periodSeconds: 5
+        successThreshold: 1
+        timeoutSeconds: 1
+      terminationMessagePath: /dev/termination-log
+      terminationMessagePolicy: File
+      volumeMounts:
+      - mountPath: /var/run/secrets/kubernetes.io/serviceaccount
+        name: kube-api-access-hp964
+        readOnly: true
+    dnsPolicy: ClusterFirst
+    enableServiceLinks: true
+    nodeName: terrasense-final
+    preemptionPolicy: PreemptLowerPriority
+    priority: 0
+    restartPolicy: Always
+    schedulerName: default-scheduler
+    securityContext: {}
+    serviceAccount: default
+    serviceAccountName: default
+    terminationGracePeriodSeconds: 30
+    tolerations:
+    - effect: NoExecute
+      key: node.kubernetes.io/not-ready
+      operator: Exists
+      tolerationSeconds: 300
+    - effect: NoExecute
+      key: node.kubernetes.io/unreachable
+      operator: Exists
+      tolerationSeconds: 300
+    volumes:
+    - name: kube-api-access-hp964
+      projected:
+        defaultMode: 420
+        sources:
+        - serviceAccountToken:
+            expirationSeconds: 3607
+            path: token
+        - configMap:
+            items:
+            - key: ca.crt
+              path: ca.crt
+            name: kube-root-ca.crt
+        - downwardAPI:
+            items:
+            - fieldRef:
+                apiVersion: v1
+                fieldPath: metadata.namespace
+              path: namespace
+  status:
+    conditions:
+    - lastProbeTime: null
+      lastTransitionTime: "2026-11-19T14:10:13Z"
+      observedGeneration: 1
+      status: "True"
+      type: PodReadyToStartContainers
+    - lastProbeTime: null
+      lastTransitionTime: "2026-11-19T14:10:12Z"
+      observedGeneration: 1
+      status: "True"
+      type: Initialized
+    - lastProbeTime: null
+      lastTransitionTime: "2026-11-19T14:10:18Z"
+      observedGeneration: 1
+      status: "True"
+      type: Ready
+    - lastProbeTime: null
+      lastTransitionTime: "2026-11-19T14:10:18Z"
+      observedGeneration: 1
+      status: "True"
+      type: ContainersReady
+    - lastProbeTime: null
+      lastTransitionTime: "2026-11-19T14:10:12Z"
+      observedGeneration: 1
+      status: "True"
+      type: PodScheduled
+    containerStatuses:
+    - allocatedResources:
+        cpu: 100m
+        memory: 128Mi
+      containerID: containerd://30acc64a19fde63046fee5c4a5fdc32785e01034422fe2a116291e0d521dfa03
+      image: docker.io/library/terrasense-frontend:1.0.0
+      imageID: sha256:ff5b987a89a02417448d6b6ffc4ec4cb87544f47225eb4bf47d1d3831ab72917
+      lastState: {}
+      name: front
+      ready: true
+      resources:
+        limits:
+          cpu: 500m
+          memory: 384Mi
+        requests:
+          cpu: 100m
+          memory: 128Mi
+      restartCount: 0
+      started: true
+      state:
+        running:
+          startedAt: "2026-11-19T14:10:12Z"
+      user:
+        linux:
+          gid: 1000
+          supplementalGroups:
+          - 1000
+          uid: 1000
+      volumeMounts:
+      - mountPath: /var/run/secrets/kubernetes.io/serviceaccount
+        name: kube-api-access-hp964
+        readOnly: true
+        recursiveReadOnly: Disabled
+    hostIP: 192.168.85.2
+    hostIPs:
+    - ip: 192.168.85.2
+    observedGeneration: 1
+    phase: Running
+    podIP: 10.244.0.13
+    podIPs:
+    - ip: 10.244.0.13
+    qosClass: Burstable
+    startTime: "2026-11-19T14:10:12Z"
+- apiVersion: v1
+  kind: Pod
+  metadata:
+    creationTimestamp: "2026-11-19T14:09:56Z"
+    generateName: postgres-
+    generation: 1
+    labels:
+      app: postgres
+      apps.kubernetes.io/pod-index: "0"
+      controller-revision-hash: postgres-64f6cb6b5d
+      statefulset.kubernetes.io/pod-name: postgres-0
+    name: postgres-0
+    namespace: terrasense-final
+    ownerReferences:
+    - apiVersion: apps/v1
+      blockOwnerDeletion: true
+      controller: true
+      kind: StatefulSet
+      name: postgres
+      uid: 9664dd5c-34ae-485c-9d74-f9a5ef938322
+    resourceVersion: "815"
+    uid: 2492bf05-6850-4fd0-b2d2-b0aa1c90f38a
+  spec:
+    containers:
+    - env:
+      - name: PGDATA
+        value: /var/lib/postgresql/data/pgdata
+      envFrom:
+      - configMapRef:
+          name: app-config
+      - secretRef:
+          name: postgres-local
+      image: postgres:16-alpine
+      imagePullPolicy: IfNotPresent
+      name: postgres
+      ports:
+      - containerPort: 5432
+        protocol: TCP
+      readinessProbe:
+        exec:
+          command:
+          - sh
+          - -c
+          - pg_isready -U "$POSTGRES_USER" -d "$POSTGRES_DB"
+        failureThreshold: 3
+        periodSeconds: 5
+        successThreshold: 1
+        timeoutSeconds: 1
+      resources:
+        limits:
+          cpu: "1"
+          memory: 1Gi
+        requests:
+          cpu: 250m
+          memory: 256Mi
+      startupProbe:
+        exec:
+          command:
+          - sh
+          - -c
+          - pg_isready -U "$POSTGRES_USER" -d "$POSTGRES_DB"
+        failureThreshold: 60
+        periodSeconds: 5
+        successThreshold: 1
+        timeoutSeconds: 1
+      terminationMessagePath: /dev/termination-log
+      terminationMessagePolicy: File
+      volumeMounts:
+      - mountPath: /var/lib/postgresql/data
+        name: data
+      - mountPath: /var/run/secrets/kubernetes.io/serviceaccount
+        name: kube-api-access-hqszg
+        readOnly: true
+    dnsPolicy: ClusterFirst
+    enableServiceLinks: true
+    hostname: postgres-0
+    nodeName: terrasense-final
+    preemptionPolicy: PreemptLowerPriority
+    priority: 0
+    restartPolicy: Always
+    schedulerName: default-scheduler
+    securityContext: {}
+    serviceAccount: default
+    serviceAccountName: default
+    subdomain: postgres
+    terminationGracePeriodSeconds: 30
+    tolerations:
+    - effect: NoExecute
+      key: node.kubernetes.io/not-ready
+      operator: Exists
+      tolerationSeconds: 300
+    - effect: NoExecute
+      key: node.kubernetes.io/unreachable
+      operator: Exists
+      tolerationSeconds: 300
+    volumes:
+    - name: data
+      persistentVolumeClaim:
+        claimName: data-postgres-0
+    - name: kube-api-access-hqszg
+      projected:
+        defaultMode: 420
+        sources:
+        - serviceAccountToken:
+            expirationSeconds: 3607
+            path: token
+        - configMap:
+            items:
+            - key: ca.crt
+              path: ca.crt
+            name: kube-root-ca.crt
+        - downwardAPI:
+            items:
+            - fieldRef:
+                apiVersion: v1
+                fieldPath: metadata.namespace
+              path: namespace
+  status:
+    conditions:
+    - lastProbeTime: null
+      lastTransitionTime: "2026-11-19T14:10:05Z"
+      observedGeneration: 1
+      status: "True"
+      type: PodReadyToStartContainers
+    - lastProbeTime: null
+      lastTransitionTime: "2026-11-19T14:09:56Z"
+      observedGeneration: 1
+      status: "True"
+      type: Initialized
+    - lastProbeTime: null
+      lastTransitionTime: "2026-11-19T14:10:07Z"
+      observedGeneration: 1
+      status: "True"
+      type: Ready
+    - lastProbeTime: null
+      lastTransitionTime: "2026-11-19T14:10:07Z"
+      observedGeneration: 1
+      status: "True"
+      type: ContainersReady
+    - lastProbeTime: null
+      lastTransitionTime: "2026-11-19T14:09:56Z"
+      observedGeneration: 1
+      status: "True"
+      type: PodScheduled
+    containerStatuses:
+    - allocatedResources:
+        cpu: 250m
+        memory: 256Mi
+      containerID: containerd://8f61038287196b96f03a7caa89b727c0d92638f4828ee2cce570ce8379a45856
+      image: docker.io/library/postgres:16-alpine
+      imageID: docker.io/library/postgres@sha256:1d5b02d3a9941fbd52437db4107f8c52d6297dac553ca1e5c299ebb3756b4857
+      lastState: {}
+      name: postgres
+      ready: true
+      resources:
+        limits:
+          cpu: "1"
+          memory: 1Gi
+        requests:
+          cpu: 250m
+          memory: 256Mi
+      restartCount: 0
+      started: true
+      state:
+        running:
+          startedAt: "2026-11-19T14:10:04Z"
+      user:
+        linux:
+          gid: 0
+          supplementalGroups:
+          - 0
+          - 1
+          - 2
+          - 3
+          - 4
+          - 6
+          - 10
+          - 11
+          - 20
+          - 26
+          - 27
+          uid: 0
+      volumeMounts:
+      - mountPath: /var/lib/postgresql/data
+        name: data
+      - mountPath: /var/run/secrets/kubernetes.io/serviceaccount
+        name: kube-api-access-hqszg
+        readOnly: true
+        recursiveReadOnly: Disabled
+    hostIP: 192.168.85.2
+    hostIPs:
+    - ip: 192.168.85.2
+    observedGeneration: 1
+    phase: Running
+    podIP: 10.244.0.8
+    podIPs:
+    - ip: 10.244.0.8
+    qosClass: Burstable
+    startTime: "2026-11-19T14:09:56Z"
+kind: List
+metadata:
+  resourceVersion: ""

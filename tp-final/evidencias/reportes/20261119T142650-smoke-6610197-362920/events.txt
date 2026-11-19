@@ -1,0 +1,54 @@
+LAST SEEN   TYPE      REASON                         OBJECT                                  MESSAGE
+16m         Normal    Provisioning                   persistentvolumeclaim/data-postgres-0   External provisioner is provisioning volume for claim "terrasense-final/data-postgres-0"
+16m         Normal    ExternalProvisioning           persistentvolumeclaim/data-postgres-0   Waiting for a volume to be created either by the external provisioner 'k8s.io/minikube-hostpath' or manually by the system administrator. If volume creation is delayed, please verify that the provisioner is running and correctly registered.
+16m         Normal    ProvisioningSucceeded          persistentvolumeclaim/data-postgres-0   Successfully provisioned volume pvc-f5983e66-a72b-4638-9521-3ccf5e15d27c
+16m         Warning   FailedScheduling               pod/postgres-0                          0/1 nodes are available: pod has unbound immediate PersistentVolumeClaims. not found
+16m         Normal    Scheduled                      pod/postgres-0                          Successfully assigned terrasense-final/postgres-0 to terrasense-final
+16m         Normal    SuccessfulCreate               statefulset/postgres                    create Pod postgres-0 in StatefulSet postgres successful
+16m         Normal    SuccessfulCreate               statefulset/postgres                    create Claim data-postgres-0 Pod postgres-0 in StatefulSet postgres success
+16m         Normal    Pulling                        pod/postgres-0                          Pulling image "postgres:16-alpine"
+16m         Normal    Created                        pod/postgres-0                          Created container: postgres
+16m         Normal    Pulled                         pod/postgres-0                          Successfully pulled image "postgres:16-alpine" in 7.537s (7.537s including waiting). Image size: 116258586 bytes.
+16m         Normal    Started                        pod/postgres-0                          Started container postgres
+16m         Normal    SuccessfulCreate               replicaset/backend-5d57b7f774           Created pod: backend-5d57b7f774-8jzhz
+16m         Normal    ScalingReplicaSet              deployment/backend                      Scaled up replica set backend-5d57b7f774 from 0 to 1
+16m         Normal    Scheduled                      pod/backend-5d57b7f774-8jzhz            Successfully assigned terrasense-final/backend-5d57b7f774-8jzhz to terrasense-final
+16m         Normal    Started                        pod/backend-5d57b7f774-8jzhz            Started container backend
+16m         Normal    Created                        pod/backend-5d57b7f774-8jzhz            Created container: backend
+16m         Normal    Pulled                         pod/backend-5d57b7f774-8jzhz            Container image "terrasense-backend:1.0.0" already present on machine
+16m         Normal    Created                        pod/front-stable-5d58f4dcb7-tbkhb       Created container: front
+16m         Normal    Pulled                         pod/front-stable-5d58f4dcb7-fgf77       Container image "terrasense-frontend:1.0.0" already present on machine
+16m         Normal    ScalingReplicaSet              deployment/front-stable                 Scaled up replica set front-stable-5d58f4dcb7 from 0 to 2
+16m         Normal    SuccessfulCreate               replicaset/front-stable-5d58f4dcb7      Created pod: front-stable-5d58f4dcb7-tbkhb
+16m         Normal    Scheduled                      pod/front-canary-89c47b5c4-4jm7d        Successfully assigned terrasense-final/front-canary-89c47b5c4-4jm7d to terrasense-final
+16m         Normal    Pulled                         pod/front-canary-89c47b5c4-4jm7d        Container image "terrasense-frontend:1.1.0" already present on machine
+16m         Normal    Created                        pod/front-canary-89c47b5c4-4jm7d        Created container: front
+16m         Normal    Started                        pod/front-canary-89c47b5c4-4jm7d        Started container front
+16m         Normal    Scheduled                      pod/front-canary-89c47b5c4-fm7dp        Successfully assigned terrasense-final/front-canary-89c47b5c4-fm7dp to terrasense-final
+16m         Normal    Pulled                         pod/front-canary-89c47b5c4-fm7dp        Container image "terrasense-frontend:1.1.0" already present on machine
+16m         Normal    Created                        pod/front-canary-89c47b5c4-fm7dp        Created container: front
+16m         Normal    Started                        pod/front-canary-89c47b5c4-fm7dp        Started container front
+16m         Normal    SuccessfulCreate               replicaset/front-canary-89c47b5c4       Created pod: front-canary-89c47b5c4-fm7dp
+16m         Normal    SuccessfulCreate               replicaset/front-canary-89c47b5c4       Created pod: front-canary-89c47b5c4-4jm7d
+16m         Normal    ScalingReplicaSet              deployment/front-canary                 Scaled up replica set front-canary-89c47b5c4 from 0 to 2
+16m         Normal    SuccessfulCreate               replicaset/front-stable-5d58f4dcb7      Created pod: front-stable-5d58f4dcb7-fgf77
+16m         Normal    Scheduled                      pod/front-stable-5d58f4dcb7-fgf77       Successfully assigned terrasense-final/front-stable-5d58f4dcb7-fgf77 to terrasense-final
+16m         Normal    Started                        pod/front-stable-5d58f4dcb7-tbkhb       Started container front
+16m         Normal    Created                        pod/front-stable-5d58f4dcb7-fgf77       Created container: front
+16m         Normal    Started                        pod/front-stable-5d58f4dcb7-fgf77       Started container front
+16m         Normal    Scheduled                      pod/front-stable-5d58f4dcb7-tbkhb       Successfully assigned terrasense-final/front-stable-5d58f4dcb7-tbkhb to terrasense-final
+16m         Normal    Pulled                         pod/front-stable-5d58f4dcb7-tbkhb       Container image "terrasense-frontend:1.0.0" already present on machine
+16m         Normal    Started                        pod/backend-5d57b7f774-nc8qw            Started container backend
+16m         Normal    Scheduled                      pod/backend-5d57b7f774-nc8qw            Successfully assigned terrasense-final/backend-5d57b7f774-nc8qw to terrasense-final
+16m         Normal    Pulled                         pod/backend-5d57b7f774-nc8qw            Container image "terrasense-backend:1.0.0" already present on machine
+16m         Normal    Created                        pod/backend-5d57b7f774-nc8qw            Created container: backend
+16m         Normal    ScalingReplicaSet              deployment/backend                      Scaled up replica set backend-5d57b7f774 from 1 to 2
+16m         Normal    SuccessfulRescale              horizontalpodautoscaler/backend         New size: 2; reason: Current number of replicas below Spec.MinReplicas
+16m         Normal    SuccessfulCreate               replicaset/backend-5d57b7f774           Created pod: backend-5d57b7f774-nc8qw
+16m         Normal    Sync                           ingress/front-canary                    Scheduled for sync
+16m         Normal    Sync                           ingress/api                             Scheduled for sync
+16m         Normal    Sync                           ingress/front                           Scheduled for sync
+16m         Warning   FailedComputeMetricsReplicas   horizontalpodautoscaler/backend         invalid metrics (1 invalid out of 1), first error is: failed to get cpu resource metric value: failed to get cpu utilization: unable to get metrics for resource cpu: no metrics returned from resource metrics API
+16m         Warning   FailedGetResourceMetric        horizontalpodautoscaler/backend         failed to get cpu utilization: unable to get metrics for resource cpu: no metrics returned from resource metrics API
+15m         Warning   FailedGetResourceMetric        horizontalpodautoscaler/backend         failed to get cpu utilization: did not receive metrics for targeted pods (pods might be unready)
+15m         Warning   FailedComputeMetricsReplicas   horizontalpodautoscaler/backend         invalid metrics (1 invalid out of 1), first error is: failed to get cpu resource metric value: failed to get cpu utilization: did not receive metrics for targeted pods (pods might be unready)

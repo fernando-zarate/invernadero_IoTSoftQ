@@ -1,0 +1,21 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: front
+  namespace: terrasense-final
+  annotations:
+    nginx.ingress.kubernetes.io/affinity: cookie
+    nginx.ingress.kubernetes.io/affinity-mode: persistent
+    nginx.ingress.kubernetes.io/session-cookie-name: TERRASENSE_ROUTE
+    nginx.ingress.kubernetes.io/session-cookie-max-age: "600"
+    nginx.ingress.kubernetes.io/session-cookie-change-on-failure: "true"
+spec:
+  ingressClassName: nginx
+  rules:
+    - host: terrasense.local
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service: {name: front-stable, port: {number: 3000}}

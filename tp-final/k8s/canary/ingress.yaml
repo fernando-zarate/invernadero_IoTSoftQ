@@ -1,0 +1,21 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: front-canary
+  namespace: terrasense-final
+  annotations:
+    nginx.ingress.kubernetes.io/canary: "true"
+    nginx.ingress.kubernetes.io/canary-weight: "0"
+    nginx.ingress.kubernetes.io/canary-by-header: X-Canary
+    nginx.ingress.kubernetes.io/canary-by-cookie: TERRASENSE_QA
+    nginx.ingress.kubernetes.io/affinity-canary-behavior: sticky
+spec:
+  ingressClassName: nginx
+  rules:
+    - host: terrasense.local
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service: {name: front-canary, port: {number: 3000}}

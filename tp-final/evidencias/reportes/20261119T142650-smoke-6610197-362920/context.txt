@@ -1,0 +1,34 @@
+2026-11-19T14:26:50Z
+66101978720738bacb1f9211080bb0a05f5c8072
+ M .dockerignore
+ M backend/nestjs/src/main.ts
+ M backend/nestjs/src/repositories/device.repository.ts
+ M backend/nestjs/tests/services/sensors.service.spec.ts
+ D frontend/dashboard/jest.config.ts
+ M frontend/dashboard/next.config.ts
+ M frontend/dashboard/src/app/layout.tsx
+ M frontend/dashboard/src/components/dashboard/DashboardContainer.tsx
+ M frontend/dashboard/src/hooks/useHistoryMetrics.ts
+ M frontend/dashboard/src/hooks/useLatestMetrics.ts
+ M frontend/dashboard/tests/class/metricsObserver.test.ts
+ M frontend/dashboard/tests/hooks/useHistoryMetrics.test.ts
+ M frontend/dashboard/tests/hooks/useLatestMetrics.test.ts
+?? .github/workflows/final-quality.yml
+?? "TP - HPA y k6.pdf"
+?? TP_Final.pdf
+?? backend/nestjs/src/main.spec.ts
+?? frontend/dashboard/jest.config.mjs
+?? frontend/dashboard/src/lib/app-version.ts
+?? frontend/dashboard/tests/app-version.test.ts
+?? horusec-44537145954-1.zip
+?? horusec-44537145954-1/
+?? reports/
+?? tp-final/
+?? tp-k8s/.gitignore
+?? tp-k8s/comandos_actualizado.md
+?? tp-k8s/falla-ux.png
+?? tp-k8s/ux-antes.png
+?? tp-k8s/ux-despues.png
+k6 v2.4.0 (commit/dd9395906d, go1.26.11, linux/amd64)
+mode=smoke RATE=default DURATION=default VISITS=default FORCE=none
+WEB_URL=http://terrasense.local API_URL=http://api.terrasense.local

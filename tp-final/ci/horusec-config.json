@@ -1,0 +1,13 @@
+{
+  "horusecCliDisableDocker": false,
+  "horusecCliReturnErrorIfFoundVulnerability": true,
+  "horusecCliEnableInformationSeverity": false,
+  "horusecCliSeveritiesToIgnore": ["INFO"],
+  "horusecCliFalsePositiveHashes": [],
+  "horusecCliRiskAcceptHashes": [],
+  "horusecCliFilesOrPathsToIgnore": [
+    "**/.git/**", "**/.horusec/**", "**/node_modules/**", "**/.next/**",
+    "**/dist/**", "**/.pio/**", "**/coverage/**", "**/reports/horusec/**",
+    "**/tp-final/evidencias/**", "**/tp-final/.local/**"
+  ]
+}
